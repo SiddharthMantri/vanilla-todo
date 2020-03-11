@@ -10,65 +10,74 @@ function genId(length) {
   }
   return result.join("");
 }
-
-class TodoMvc {
+class Model {
   constructor() {
     this.tasks = [];
-    this.add = this.add.bind(this);
-    this.complete = this.complete.bind(this);
-    this.delete = this.delete.bind(this);
-    this.addBtnFnc = this.addBtnFnc.bind(this);
-    this.init();
   }
-  add({ task = "" }) {
-    let tsk = {
+  add({ task }) {
+    const todo = {
       id: genId(8),
       task,
       completed: false,
       deleted: false
     };
-    this.tasks.push(tsk);
+    return [...this.tasks, todo];
   }
-  complete(id) {
-    let newTasks = this.tasks.map(task =>
-      task.id === id ? { ...task, completed: true } : task
-    );
-    this.updateTasks(newTasks);
+  completed({ id }) {
+    let idx = this.tasks.findIndex(task => task.id === id);
+    this.tasks[idx] = { ...this.tasks[idx], completed: true };
+    return [...this.tasks];
   }
-  delete(id) {
+  delete({ id }) {
     let idx = this.tasks.findIndex(task => task.id === id);
     if (idx > -1) {
       this.tasks.splice(idx, 1);
     }
-    this.updateTasks(this.tasks);
+    return [...this.tasks];
   }
-  updateTasks(newTasks = []) {
-    this.tasks = newTasks;
-  }
-  addBtnFnc() {
-    let task = document.getElementById("input-text").value;
-    this.add({ task });
-    console.log(this.tasks);
-  }
-  init() {
-    let componentWrap = document.createElement("div");
-    componentWrap.className = "comp-wrapper";
-    let inputWrap = document.createElement("div");
-    inputWrap.className = "task-input-wrapper";
-    let input = document.createElement("input");
-    input.id = "input-text";
-    inputWrap.appendChild(input);
-    let addBtn = document.createElement("button");
-    addBtn.innerText = "Add";
-    addBtn.addEventListener("click", this.addBtnFnc);
-    inputWrap.appendChild(addBtn);
+}
+class View {
+  constructor() {
+    this.comp = this.getElement("#root");
+    this.wrapper = this.createElement("div", "task-input-wrapper");
+    this.input = this.createElement("input");
+    this.input.type = "text";
+    this.input.name = "todo";
+    this.formBtn = this.createElement("button");
+    this.formBtn.innerText = "Add Task";
+    this.wrapper.append(this.input, this.formBtn);
+    this.list = this.createElement("ul", "todo-list");
 
-    let taskWrapper = document.createElement("div");
-
-    componentWrap.appendChild(inputWrap);
-    componentWrap.appendChild(taskWrapper);
-    document.getElementById("root").appendChild(componentWrap);
+    this.comp.append(this.wrapper, this.list);
+  }
+  createElement(tag, className) {
+    const element = document.createElement(tag);
+    if (className) element.classList.add(className);
+    return element;
+  }
+  getElement(selector) {
+    return document.querySelector(selector);
+  }
+  displayList(tasks = []) {
+    while (this.list.firstChild) {
+      this.list.removeChild(this.todoList.firstChild);
+      tasks.forEach(task => {
+        const li = this.createElement("li", "task-item");
+        li.id = task.id;
+        const text = this.createElement("span");
+        text.innerText = task.task;
+        li.appendChild(text);
+        this.list.appendChild(li);
+      });
+    }
   }
 }
 
-new TodoMvc();
+class TodoMvc {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+  }
+}
+
+const App = new TodoMvc(new Model(), new View());
