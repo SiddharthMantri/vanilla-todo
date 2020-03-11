@@ -1,0 +1,36 @@
+/* Maybe reset css? */
+
+/* 
+   Dark blue  052355
+   Dull blue 33658F
+   Blue 42B3D9
+   Off blue B3F9FB
+   Yellow? FCC946
+*/
+body {
+  width: 100%;
+}
+.comp-wrapper {
+  margin: auto;
+}
+.task-input-wrapper {
+  display: flex;
+  padding: 16px;
+  width: 350px;
+  margin: auto;
+  background: #b3f9fb;
+  margin-bottom: 32px;
+}
+.task-input-wrapper input,
+.task-input-wrapper button {
+  border: none;
+  outline: none;
+  height: 32px;
+  margin: 8px;
+  font-size: 16px;
+  font-weight: 200;
+}
+
+.task-input-wrapper input {
+  width: 282px;
+}
