@@ -9,13 +9,14 @@ const genId = length => {
 };
 class Model {
   constructor() {
-    this.tasks = [];
+    this.tasks = JSON.parse(localStorage.getItem("tasks")) || [];
   }
   bindListChange(cb) {
     this.onListChange = cb;
   }
   _update(tasks) {
     this.onListChange(tasks);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
   }
   add({ task }) {
     const todo = {
@@ -43,17 +44,23 @@ class Model {
 class View {
   constructor() {
     this.comp = this.getElement("#root");
-    this.wrapper = this.createElement("div", "task-input-wrapper");
+    this.comp.classList.add("comp-wrapper");
+    this.title = this.createElement("h3", "title-text");
+    this.title.innerText = "Reminders";
+    this.form = this.createElement("form", "task-input-wrapper");
     this.input = this.createElement("input");
     this.input.type = "text";
     this.input.name = "todo";
     this.formBtn = this.createElement("button");
-    this.formBtn.innerText = "Add Task";
-    this.wrapper.append(this.input, this.formBtn);
+    this.formBtn.innerText = "Add";
+    this.formBtn.type = "submit";
+    this.form.append(this.input, this.formBtn);
     this.listWrapper = this.createElement("div", "task-list-wrapper");
     this.list = this.createElement("ul", "task-list");
     this.listWrapper.append(this.list);
-    this.comp.append(this.wrapper, this.listWrapper);
+    this.main = this.createElement("div", "main-card");
+    this.main.append(this.title, this.form, this.listWrapper);
+    this.comp.append(this.main);
   }
   createElement(tag, className) {
     const element = document.createElement(tag);
@@ -70,17 +77,21 @@ class View {
     tasks.forEach(task => {
       const li = this.createElement("li", "task-item");
       li.id = task.id;
-      const text = this.createElement("span");
+      const text = this.createElement("span", "task-item-text");
       text.innerText = task.task;
-      li.appendChild(text);
+      const actions = this.createElement("span", "task-item-actions");
+      actions.innerText = "Completed";
+      li.append(text, actions);
       this.list.appendChild(li);
     });
   }
   bindAddTodo(handler) {
-    this.formBtn.addEventListener("click", e => {
+    this.form.addEventListener("submit", e => {
       e.preventDefault();
-      handler({ task: this.input.value });
-      this.input.value = "";
+      if (this.input.value !== "") {
+        handler({ task: this.input.value });
+        this.input.value = "";
+      }
     });
   }
 }
@@ -99,7 +110,6 @@ class TodoMvc {
     this.view.displayList(tasks);
   };
   handleAdd = task => {
-    console.log(this.model);
     this.model.add(task);
   };
 }
