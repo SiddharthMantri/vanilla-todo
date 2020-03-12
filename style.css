@@ -21,6 +21,14 @@ body {
   background: #b3f9fb;
   margin-bottom: 32px;
 }
+.task-list {
+  padding: 16px;
+  width: 350px;
+  margin: auto;
+}
+.task-list li {
+  list-style: none;
+}
 .task-input-wrapper input,
 .task-input-wrapper button {
   border: none;
