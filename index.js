@@ -24,20 +24,20 @@ class Model {
       completed: false,
       deleted: false
     };
-    console.log([...this.tasks, todo]);
-    this._update([...this.tasks, todo]);
+    this.tasks.push(todo);
+    this._update(this.tasks);
   }
   completed({ id }) {
     let idx = this.tasks.findIndex(task => task.id === id);
     this.tasks[idx] = { ...this.tasks[idx], completed: true };
-    return [...this.tasks];
+    this._update(this.tasks);
   }
   delete({ id }) {
     let idx = this.tasks.findIndex(task => task.id === id);
     if (idx > -1) {
       this.tasks.splice(idx, 1);
     }
-    this._update([...this.tasks]);
+    this._update(this.tasks);
   }
 }
 class View {
@@ -50,9 +50,10 @@ class View {
     this.formBtn = this.createElement("button");
     this.formBtn.innerText = "Add Task";
     this.wrapper.append(this.input, this.formBtn);
+    this.listWrapper = this.createElement("div", "task-list-wrapper");
     this.list = this.createElement("ul", "task-list");
-
-    this.comp.append(this.wrapper, this.list);
+    this.listWrapper.append(this.list);
+    this.comp.append(this.wrapper, this.listWrapper);
   }
   createElement(tag, className) {
     const element = document.createElement(tag);
@@ -98,8 +99,9 @@ class TodoMvc {
     this.view.displayList(tasks);
   };
   handleAdd = task => {
+    console.log(this.model);
     this.model.add(task);
   };
 }
 
-const App = new TodoMvc(new Model(), new View());
+new TodoMvc(new Model(), new View());
