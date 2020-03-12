@@ -43,12 +43,13 @@ body {
   list-style: none;
   width: 100%;
   font-size: 0.8rem;
-  color: #333
+  color: #333;
 }
 .task-item {
   padding: 8px;
   box-sizing: border-box;
   display: flex;
+  margin-bottom: 8px;;
 }
 .task-item-text {
   align-self: flex-start;
@@ -58,6 +59,20 @@ body {
   align-self: flex-end;
   text-align: right;
   width: 20%;
+}
+.task-item-actions span {
+  padding: 4px 8px;
+  cursor: pointer;
+  margin-left: 4px;
+  border-radius: 4px;
+  color: white;
+  font-size: 0.5rem;
+}
+.delete {
+  background: red;
+}
+.complete {
+  background: #052355;
 }
 .task-input-wrapper input,
 .task-input-wrapper button {

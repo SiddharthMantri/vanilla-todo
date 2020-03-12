@@ -78,9 +78,20 @@ class View {
       const li = this.createElement("li", "task-item");
       li.id = task.id;
       const text = this.createElement("span", "task-item-text");
-      text.innerText = task.task;
+      if (task.completed === true) {
+        let strike = this.createElement("s");
+        strike.innerText = task.task;
+        text.append(strike);
+      } else {
+        text.append(task.task);
+      }
       const actions = this.createElement("span", "task-item-actions");
-      actions.innerText = "Completed";
+      actions.id = task.id;
+      const compBtn = this.createElement("span", "complete");
+      compBtn.innerText = "Done";
+      const delBtn = this.createElement("span", "delete");
+      delBtn.innerText = 'Del'
+      actions.append(compBtn, delBtn);
       li.append(text, actions);
       this.list.appendChild(li);
     });
@@ -94,6 +105,22 @@ class View {
       }
     });
   }
+  bindCompleteTodo(handler) {
+    this.list.addEventListener("click", e => {
+      if (e.target.className === "complete") {
+        let id = e.target.parentElement.id;
+        handler({ id });
+      }
+    });
+  }
+  bindDeleteTodo(handler) {
+    this.list.addEventListener("click", e => {
+      if (e.target.className === "delete") {
+        let id = e.target.parentElement.id;
+        handler({ id });
+      }
+    });
+  }
 }
 
 class TodoMvc {
@@ -103,6 +130,8 @@ class TodoMvc {
 
     this.model.bindListChange(this.onListChange);
     this.view.bindAddTodo(this.handleAdd);
+    this.view.bindCompleteTodo(this.handleComplete);
+    this.view.bindDeleteTodo(this.handleDelete);
 
     this.onListChange(this.model.tasks);
   }
@@ -111,6 +140,12 @@ class TodoMvc {
   };
   handleAdd = task => {
     this.model.add(task);
+  };
+  handleComplete = id => {
+    this.model.completed(id);
+  };
+  handleDelete = id => {
+    this.model.delete(id);
   };
 }
 
