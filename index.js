@@ -30,7 +30,10 @@ class Model {
   }
   completed({ id }) {
     let idx = this.tasks.findIndex(task => task.id === id);
-    this.tasks[idx] = { ...this.tasks[idx], completed: true };
+    this.tasks[idx] = {
+      ...this.tasks[idx],
+      completed: !this.tasks[idx].completed
+    };
     this._update(this.tasks);
   }
   delete({ id }) {
@@ -48,9 +51,11 @@ class View {
     this.title = this.createElement("h3", "title-text");
     this.title.innerText = "Reminders";
     this.form = this.createElement("form", "task-input-wrapper");
+    this.form.setAttribute("autocomplete", "off");
     this.input = this.createElement("input");
+    this.input.setAttribute("autocomplete", "none");
     this.input.type = "text";
-    this.input.name = "todo";
+    this.input.name = genId(12);
     this.formBtn = this.createElement("button");
     this.formBtn.innerText = "Add";
     this.formBtn.type = "submit";
@@ -74,27 +79,35 @@ class View {
     while (this.list.firstChild) {
       this.list.removeChild(this.list.firstChild);
     }
-    tasks.forEach(task => {
-      const li = this.createElement("li", "task-item");
-      li.id = task.id;
-      const text = this.createElement("span", "task-item-text");
-      if (task.completed === true) {
-        let strike = this.createElement("s");
-        strike.innerText = task.task;
-        text.append(strike);
-      } else {
-        text.append(task.task);
-      }
-      const actions = this.createElement("span", "task-item-actions");
-      actions.id = task.id;
-      const compBtn = this.createElement("span", "complete");
-      compBtn.innerText = "Done";
-      const delBtn = this.createElement("span", "delete");
-      delBtn.innerText = 'Del'
-      actions.append(compBtn, delBtn);
-      li.append(text, actions);
-      this.list.appendChild(li);
-    });
+    if (tasks.length > 0) {
+      tasks.forEach(task => {
+        const li = this.createElement("li", "task-item");
+        li.id = task.id;
+        const text = this.createElement("span", "task-item-text");
+        if (task.completed === true) {
+          let strike = this.createElement("s");
+          strike.innerText = task.task;
+          text.append(strike);
+        } else {
+          text.append(task.task);
+        }
+        const actions = this.createElement("span", "task-item-actions");
+        actions.id = task.id;
+        const compBtn = this.createElement("span", "complete");
+        compBtn.innerText = task.completed
+          ? "Mark as incompleted"
+          : "Mark as completed";
+        const delBtn = this.createElement("span", "delete");
+        delBtn.innerText = "Del";
+        actions.append(compBtn, delBtn);
+        li.append(text, actions);
+        this.list.appendChild(li);
+      });
+    } else {
+      let noTaskText = this.createElement("p", "no-tasks");
+      noTaskText.innerText = "Create a new reminder!";
+      this.list.append(noTaskText);
+    }
   }
   bindAddTodo(handler) {
     this.form.addEventListener("submit", e => {
