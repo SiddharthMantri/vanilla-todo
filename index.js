@@ -148,16 +148,16 @@ class TodoMvc {
 
     this.onListChange(this.model.tasks);
   }
-  onListChange = tasks => {
+  onListChange(tasks) {
     this.view.displayList(tasks);
   };
-  handleAdd = task => {
+  handleAdd(task){
     this.model.add(task);
   };
-  handleComplete = id => {
+  handleComplete(id) {
     this.model.completed(id);
   };
-  handleDelete = id => {
+  handleDelete(id) {
     this.model.delete(id);
   };
 }
